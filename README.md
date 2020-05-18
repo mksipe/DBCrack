@@ -1,6 +1,6 @@
 # DBCrack
 
-## A revers-hashing program
+## A reverse-hashing program
 
 DISCLAIMER: This was a project just for fun and I have no intention of making this into putting lots of time into this.
 
