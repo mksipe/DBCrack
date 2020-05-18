@@ -19,6 +19,7 @@ except:
 def insert_wordlist(wordlist):
 	if not os.path.isfile(wordlist):
 		print("File nonexistant")
+		print(wordlist)
 		exit(1)
 	else:
 		f = open(wordlist, "r")
@@ -103,7 +104,7 @@ def batch(verify):
 		conn.commit()
 
 def main():
-	parser= argparse.ArgumentParser(usage="DBCrack.py [options]", description="Uses a database of pre-calulated hashes to make cracking faster.")
+	parser= argparse.ArgumentParser(usage="DBCrack.py [options]", description="Uses a database of pre-calulated hashes to make cracking faster.", prog="DBCrack.py")
 	parser.add_argument("-w", "--wordlist"	,help="adds a wordlist to the database.", 		type=insert_wordlist)
 	parser.add_argument("-b", "--batch"		,help="nashes all the words in the database.", 	type=batch)
 	parser.add_argument("-a", "--attack"	,help="compares a hash to the given database.",	type=attack)
