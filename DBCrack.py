@@ -1,5 +1,6 @@
 import sqlite3, argparse, os, hashlib
 conn = None
+
 try:
 	conn = sqlite3.connect('database.db')
 except Error as e:
@@ -31,6 +32,8 @@ def insert_wordlist(wordlist):
 			Deleted = "N"
 		word = line.split("Edit")[0]
 		word = word.rstrip()
+		word = word.strip()
+		print(word)
 		try:
 			c.execute('Insert INTO hashlist (ASCII, Deleted) VALUES (?, ?)', (word, Deleted))
 		except:
@@ -76,6 +79,17 @@ def attack(string):
 	except:
 		print("SHA512: Not found.")
 
+
+def attack_list(pwdump):
+	f = open(pwdump, "r")
+	for i in f:
+		i = i.encode("utf-8")
+		i = i.rstrip()
+		i = i.strip()
+		attack(i)
+
+
+
 def batch(verify):
 	if verify != "OK":
 		print("Use the same command with 'OK' to verify you have enough storage.")
@@ -84,6 +98,7 @@ def batch(verify):
 	rows = c.fetchall()
 	for ASCII in rows:
 		ASCII = ASCII[0]
+		ASCII = ASCII.encode('utf-8')
 		print("Hashing: " + ASCII)
 		MD5 = hashlib.md5(ASCII).hexdigest()
 		SHA1 = hashlib.sha1(ASCII).hexdigest()
@@ -105,10 +120,12 @@ def batch(verify):
 
 def main():
 	parser= argparse.ArgumentParser(usage="DBCrack.py [options]", description="Uses a database of pre-calulated hashes to make cracking faster.", prog="DBCrack.py")
-	parser.add_argument("-w", "--wordlist"	,help="adds a wordlist to the database.", 		type=insert_wordlist)
-	parser.add_argument("-b", "--batch"		,help="nashes all the words in the database.", 	type=batch)
-	parser.add_argument("-a", "--attack"	,help="compares a hash to the given database.",	type=attack)
+	parser.add_argument("-w", "--wordlist"		,help="adds a wordlist to the database.", 		type=insert_wordlist)
+	parser.add_argument("-b", "--batch"			,help="nashes all the words in the database.", 	type=batch)
+	parser.add_argument("-a", "--attack"		,help="compares a hash to the given database.",	type=attack)
+	parser.add_argument("-A", "--attack-list"	,help="compares a pwdump to the database",		type=attack_list)
 	args = parser.parse_args()
 
 main()
+
 
