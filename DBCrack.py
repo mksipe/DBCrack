@@ -1,6 +1,8 @@
-import sqlite3, argparse, os, hashlib, threading, Queue, time
+import sqlite3, argparse, os, hashlib
 conn = None
+from sqlite3 import Error
 from tqdm import tqdm
+from multiprocessing import Process, Queue
 try:
 	conn = sqlite3.connect('database.db')
 except Error as e:
@@ -143,53 +145,12 @@ def batch(verify):
 		conn.commit()
 
 
-
-exitFlag = 0
-
-class myThread (threading.Thread):
-   def __init__(self, threadID, name, q):
-      threading.Thread.__init__(self)
-      self.threadID = threadID
-      self.name = name
-      self.q = q
-   def run(self):
-      process_data(self.name, self.q)
-
-def process_data(threadName, q):
-	while not exitFlag:
-		queueLock.acquire()
-		if not workQueue.empty():
-			data = q.get()
-			queueLock.release()
-		else:
-			queueLock.release()
-		time.sleep(1)
-
-threadList = ["T1", "T2", "T3", "T4"]
-nameList = ["batch", "attack", "wordlist"]
-queueLock = threading.Lock()
-workQueue = Queue.Queue(10)
-threads = []
-threadID = 1
-
-for tName in threadList:
-   thread = myThread(threadID, tName, workQueue)
-   thread.start()
-   threads.append(thread)
-   threadID += 1
-
-queueLock.acquire()
-for word in nameList:
-   workQueue.put(word)
-queueLock.release()
-
-while not workQueue.empty():
-   pass
-
-exitFlag = 1
-
-for t in threads:
-   t.join()
+def thatch(func):
+	queue = Queue()
+	p = Process(target=func, args=(queue,))
+	p.start()
+	obj = queue.get()
+	p.join()
 
 def main():
 
@@ -200,6 +161,10 @@ def main():
 	parser.add_argument("-A", "--attack-list"	,help="compares a pwdump to the database",		type=attack_list)
 	args = parser.parse_args()
 
-main()
+
+thatch(main())
+
+
+
 
 
