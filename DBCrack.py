@@ -1,8 +1,7 @@
-import sqlite3, argparse, os, hashlib
-conn = None
+import sqlite3, argparse, os, hashlib, sys
 from sqlite3 import Error
 from tqdm import tqdm
-from multiprocessing import Process, Queue
+import multiprocessing
 try:
 	conn = sqlite3.connect('database.db')
 except Error as e:
@@ -13,7 +12,7 @@ except Error as e:
 c = conn.cursor()
 
 try:
-	c.execute('''Create table "hashlist"("ASCII" TEXT, "Deleted" TEXT, "MD5" TEXT, "SHA1" TEXT, "SHA224" TEXT, "SHA256" TEXT, "SHA384" TEXT, "SHA512" TEXT);''')
+	c.execute('''Create table "hashlist" ("ASCII" TEXT, "Deleted" TEXT, "MD5" TEXT, "SHA1" TEXT, "SHA224" TEXT, "SHA256" TEXT, "SHA384" TEXT, "SHA512" TEXT);''')
 except:
 	print("")
 
@@ -39,7 +38,7 @@ def insert_wordlist(wordlist):
 		try:
 			c.execute('Insert INTO hashlist (ASCII, Deleted) VALUES (?, ?)', (word, Deleted))
 		except:
-			print("A duplicate record was found:", word)
+			print(word)
 		count += 1
 	conn.commit()
 	print(count, "records processed")
@@ -113,8 +112,10 @@ def batch(verify):
 	if verify != "OK":
 		print("Use the same command with 'OK' to verify you have enough storage.")
 		exit(1)
-	c.execute("""SELECT ASCII FROM hashlist""")
+
+	c.execute("""SELECT DISTINCT ASCII FROM hashlist""")
 	rows = c.fetchall()
+	count = 0
 	for ASCII in tqdm(rows):
 		ASCII = ASCII[0]
 		ASCII = ASCII.encode('utf-8')
@@ -142,6 +143,10 @@ def batch(verify):
 		c.execute(sha256qry, sha256data)
 		c.execute(sha384qry, sha384data)
 		c.execute(sha512qry, sha512data)
+		count +=1
+		if count == 1000:
+			conn.commit()
+			count= 0
 	conn.commit()
 
 
@@ -154,8 +159,21 @@ def main():
 	parser.add_argument("-A", "--attack-list"	,help="compares a pwdump to the database",		type=attack_list)
 	args = parser.parse_args()
 
-main()
 
+
+if __name__ == '__main__':
+	try:
+		pool = multiprocessing.Pool(multiprocessing.cpu_count())
+		results = [pool.apply_async(main())]
+		pool.close()
+		print(results)
+	except KeyboardInterrupt:
+		print('Keybord interrupt caught')
+		conn.commit()
+		try:
+			sys.exit(0)
+		except SystemExit:
+			os._exit(0)
 
 
 
