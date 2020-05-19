@@ -165,11 +165,14 @@ if __name__ == '__main__':
 	try:
 		pool = multiprocessing.Pool(multiprocessing.cpu_count())
 		results = [pool.apply_async(main())]
-		pool.close()
 		print(results)
+		pool.close()
+		pool.join()
 	except KeyboardInterrupt:
 		print('Keybord interrupt caught')
 		conn.commit()
+		pool.close()
+		pool.join()
 		try:
 			sys.exit(0)
 		except SystemExit:
