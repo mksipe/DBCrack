@@ -12,7 +12,7 @@ except Error as e:
 c = conn.cursor()
 
 try:
-	c.execute('''Create table "hashlist" ("ASCII" TEXT, "Deleted" TEXT, "MD5" TEXT, "SHA1" TEXT, "SHA224" TEXT, "SHA256" TEXT, "SHA384" TEXT, "SHA512" TEXT);''')
+	c.execute('''Create table "hashlist" ("ASCII" TEXT, "Deleted" TEXT, "MD5" TEXT, "SHA1" TEXT, "SHA224" TEXT, "SHA256" TEXT, "SHA384" TEXT, "SHA512" TEXT, "NTLM" TEXT);''')
 except:
 	print("")
 
@@ -125,24 +125,28 @@ def batch(verify):
 		SHA256 = hashlib.sha256(ASCII).hexdigest()
 		SHA384 = hashlib.sha384(ASCII).hexdigest()
 		SHA512 = hashlib.sha512(ASCII).hexdigest()
+		NTLM = hashlib.new('md4', ASCII.encode('utf-16le')).hexdigest()
 		md5qry = "UPDATE hashlist SET MD5 = ? WHERE ASCII = ? "
 		sha1qry = "UPDATE hashlist SET SHA1 = ? WHERE ASCII = ? "
 		sha224qry = "UPDATE hashlist SET SHA224 = ? WHERE ASCII = ?"
 		sha256qry = "UPDATE hashlist SET SHA256 = ? WHERE ASCII = ?"
 		sha384qry = "UPDATE hashlist SET SHA384 = ? WHERE ASCII = ?"
 		sha512qry = "UPDATE hashlist SET SHA512 = ? WHERE ASCII = ?"
+		NTLMqry = "UPDATE hashlist SET NTLM = ? WHERE ASCII = ?"
 		md5data = (MD5, ASCII)
 		sha1data = (SHA1, ASCII)
 		sha224data = (SHA224, ASCII)
 		sha256data = (SHA256, ASCII)
 		sha384data = (SHA384, ASCII)
 		sha512data = (SHA512, ASCII)
+		ntlmdata = (NTLM, ASCII)
 		c.execute(md5qry, md5data)
 		c.execute(sha1qry, sha1data)
 		c.execute(sha224qry, sha224data)
 		c.execute(sha256qry, sha256data)
 		c.execute(sha384qry, sha384data)
 		c.execute(sha512qry, sha512data)
+		c.execute(NTLMqry, ntlmdata)
 		count +=1
 		if count == 1000:
 			conn.commit()
