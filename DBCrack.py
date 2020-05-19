@@ -142,15 +142,8 @@ def batch(verify):
 		c.execute(sha256qry, sha256data)
 		c.execute(sha384qry, sha384data)
 		c.execute(sha512qry, sha512data)
-		conn.commit()
+	conn.commit()
 
-
-def thatch(func):
-	queue = Queue()
-	p = Process(target=func, args=(queue,))
-	p.start()
-	obj = queue.get()
-	p.join()
 
 def main():
 
@@ -161,9 +154,7 @@ def main():
 	parser.add_argument("-A", "--attack-list"	,help="compares a pwdump to the database",		type=attack_list)
 	args = parser.parse_args()
 
-
-thatch(main())
-
+main()
 
 
 
