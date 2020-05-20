@@ -97,6 +97,14 @@ def attack(string):
 		print("SHA512: " +  string + ":" + res)
 	except:
 		pass
+	try:
+		c.execute('select * from hashlist where NTLM=?', (string,))
+		res = c.fetchall()
+		res = res[0][0]
+		print("NTLM  : " + string + ":" + res)
+	except:
+		pass
+
 
 
 def attack_list(pwdump):
@@ -117,30 +125,30 @@ def batch(verify):
 	c.execute("""SELECT DISTINCT ASCII FROM hashlist WHERE CALC='N'""")
 	rows = c.fetchall()
 	count = 0
-	for ASCII in tqdm(rows):
-		ASCII = ASCII[0]
-		ASCII = ASCII.encode('utf-8')
-		MD5 = hashlib.md5(ASCII).hexdigest()
-		SHA1 = hashlib.sha1(ASCII).hexdigest()
-		SHA224 = hashlib.sha224(ASCII).hexdigest()
-		SHA256 = hashlib.sha256(ASCII).hexdigest()
-		SHA384 = hashlib.sha384(ASCII).hexdigest()
-		SHA512 = hashlib.sha512(ASCII).hexdigest()
-		NTLM = hashlib.new('md4', ASCII.encode('utf-16le')).hexdigest()
-		md5qry = "UPDATE hashlist SET MD5 = ? WHERE ASCII = ? "
-		sha1qry = "UPDATE hashlist SET SHA1 = ? WHERE ASCII = ? "
-		sha224qry = "UPDATE hashlist SET SHA224 = ? WHERE ASCII = ?"
-		sha256qry = "UPDATE hashlist SET SHA256 = ? WHERE ASCII = ?"
-		sha384qry = "UPDATE hashlist SET SHA384 = ? WHERE ASCII = ?"
-		sha512qry = "UPDATE hashlist SET SHA512 = ? WHERE ASCII = ?"
-		NTLMqry = "UPDATE hashlist SET NTLM = ? WHERE ASCII = ?"
-		md5data = (MD5, ASCII)
-		sha1data = (SHA1, ASCII)
-		sha224data = (SHA224, ASCII)
-		sha256data = (SHA256, ASCII)
-		sha384data = (SHA384, ASCII)
-		sha512data = (SHA512, ASCII)
-		ntlmdata = (NTLM, ASCII)
+	for ASCII in tqdm(rows, desc="Batching", smoothing=0.1, unit=" w"):
+		ASCII 		= ASCII[0]
+		ASCII 		= ASCII.encode('utf-8')
+		MD5 		= hashlib.md5(ASCII).hexdigest()
+		SHA1 		= hashlib.sha1(ASCII).hexdigest()
+		SHA224 		= hashlib.sha224(ASCII).hexdigest()
+		SHA256 		= hashlib.sha256(ASCII).hexdigest()
+		SHA384 		= hashlib.sha384(ASCII).hexdigest()
+		SHA512 		= hashlib.sha512(ASCII).hexdigest()
+		NTLM 		= hashlib.new('md4', ASCII.encode('utf-16le')).hexdigest()
+		md5qry 		= "UPDATE hashlist SET MD5 = ? WHERE ASCII = ? "
+		sha1qry 	= "UPDATE hashlist SET SHA1 = ? WHERE ASCII = ? "
+		sha224qry 	= "UPDATE hashlist SET SHA224 = ? WHERE ASCII = ?"
+		sha256qry 	= "UPDATE hashlist SET SHA256 = ? WHERE ASCII = ?"
+		sha384qry 	= "UPDATE hashlist SET SHA384 = ? WHERE ASCII = ?"
+		sha512qry 	= "UPDATE hashlist SET SHA512 = ? WHERE ASCII = ?"
+		NTLMqry 	= "UPDATE hashlist SET NTLM = ? WHERE ASCII = ?"
+		md5data 	= (MD5, ASCII)
+		sha1data 	= (SHA1, ASCII)
+		sha224data 	= (SHA224, ASCII)
+		sha256data 	= (SHA256, ASCII)
+		sha384data 	= (SHA384, ASCII)
+		sha512data 	= (SHA512, ASCII)
+		ntlmdata 	= (NTLM, ASCII)
 		c.execute(md5qry, md5data)
 		c.execute(sha1qry, sha1data)
 		c.execute(sha224qry, sha224data)
@@ -155,7 +163,22 @@ def batch(verify):
 		if count == 1000:
 			conn.commit()
 			count= 0
+	print("Indexing database ...")
+	c.execute('''CREATE INDEX MD5 ON hashlist(MD5)''')
+	c.execute('''CREATE INDEX SHA1 ON hashlist(SHA1)''')
+	c.execute('''CREATE INDEX SHA224 ON hashlist(SHA224)''')
+	c.execute('''CREATE INDEX SHA256 ON hashlist(SHA256)''')
+	c.execute('''CREATE INDEX SHA384 ON hashlist(SHA384)''')
+	c.execute('''CREATE INDEX SHA512 ON hashlist(SHA512)''')
+	c.execute('''CREATE INDEX NTLM ON hashlist(NTLM)''')
 	conn.commit()
+	print("Done.")
+
+
+
+
+
+
 
 
 def main():
@@ -171,11 +194,7 @@ def main():
 
 if __name__ == '__main__':
 	try:
-		pool = multiprocessing.Pool(multiprocessing.cpu_count())
-		results = [pool.apply_async(main())]
-		pool.close()
-		pool.join()
-		print(results)
+		main()
 	except KeyboardInterrupt:
 		print('Keybord interrupt caught')
 		conn.commit()
