@@ -12,7 +12,7 @@ except Error as e:
 c = conn.cursor()
 
 try:
-	c.execute('''Create table "hashlist" ("ASCII" TEXT, "Deleted" TEXT, "MD5" TEXT, "SHA1" TEXT, "SHA224" TEXT, "SHA256" TEXT, "SHA384" TEXT, "SHA512" TEXT, "NTLM" TEXT);''')
+	c.execute('''Create table "hashlist" ("ASCII" TEXT, "CALC" TEXT, "MD5" TEXT, "SHA1" TEXT, "SHA224" TEXT, "SHA256" TEXT, "SHA384" TEXT, "SHA512" TEXT, "NTLM" TEXT);''')
 except:
 	print("")
 
@@ -28,15 +28,15 @@ def insert_wordlist(wordlist):
 	count = 0
 	for line in f:
 		if "Undelete" in line:
-			Deleted = "Y"
+			CALC = "Y"
 		else:
-			Deleted = "N"
+			CALC = "N"
 		word = line.split("Edit")[0]
 		word = word.rstrip()
 		word = word.strip()
 		print(word)
 		try:
-			c.execute('Insert INTO hashlist (ASCII, Deleted) VALUES (?, ?)', (word, Deleted))
+			c.execute('Insert INTO hashlist (ASCII, CALC) VALUES (?, ?)', (word, CALC))
 		except:
 			print(word)
 		count += 1
@@ -113,7 +113,7 @@ def batch(verify):
 		print("Use the same command with 'OK' to verify you have enough storage.")
 		exit(1)
 
-	c.execute("""SELECT DISTINCT ASCII FROM hashlist""")
+	c.execute("""SELECT DISTINCT ASCII FROM hashlist WHERE CALC='N'""")
 	rows = c.fetchall()
 	count = 0
 	for ASCII in tqdm(rows):
@@ -147,6 +147,9 @@ def batch(verify):
 		c.execute(sha384qry, sha384data)
 		c.execute(sha512qry, sha512data)
 		c.execute(NTLMqry, ntlmdata)
+		update  = "UPDATE hashlist SET CALC=? WHERE ASCII = ? "
+		updatedata = ("Y", ASCII)
+		c.execute(update, updatedata)
 		count +=1
 		if count == 1000:
 			conn.commit()
@@ -169,9 +172,9 @@ if __name__ == '__main__':
 	try:
 		pool = multiprocessing.Pool(multiprocessing.cpu_count())
 		results = [pool.apply_async(main())]
-		print(results)
 		pool.close()
 		pool.join()
+		print(results)
 	except KeyboardInterrupt:
 		print('Keybord interrupt caught')
 		conn.commit()
