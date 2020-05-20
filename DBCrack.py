@@ -13,6 +13,7 @@ c = conn.cursor()
 
 try:
 	c.execute('''Create table "hashlist" ("ASCII" TEXT, "CALC" TEXT, "MD5" TEXT, "SHA1" TEXT, "SHA224" TEXT, "SHA256" TEXT, "SHA384" TEXT, "SHA512" TEXT, "NTLM" TEXT);''')
+	c.execute('''CREATE UNIQUE INDEX ID ON hashlist(ASCII, MD5, SHA1, SHA224, SHA256, SHA384, SHA512, NTLM)''')
 except:
 	print("")
 
