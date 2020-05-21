@@ -13,7 +13,7 @@ c = conn.cursor()
 
 
 try:
-	c.execute('''Create table "hashlist" ("ASCII" TEXT, "Deleted" TEXT, "MD5" TEXT, "SHA1" TEXT, "SHA224" TEXT, "SHA256" TEXT, "SHA384" TEXT, "SHA512" TEXT, "NTLM" TEXT);''')
+	c.execute('''Create table "hashlist" ("ASCII" TEXT, "CALC" TEXT, "MD5" TEXT, "SHA1" TEXT, "SHA224" TEXT, "SHA256" TEXT, "SHA384" TEXT, "SHA512" TEXT, "NTLM" TEXT);''')
 except:
 	print("")
 
