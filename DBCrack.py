@@ -2,14 +2,24 @@ import sqlite3, argparse, os, hashlib, sys, tarfile, subprocess
 from sqlite3 import Error
 from tqdm import tqdm
 import multiprocessing
+
 try:
 	conn = sqlite3.connect('database.db')
 except Error as e:
 	print("Status: DB NOT Ready: ", e)
 
 
-
 c = conn.cursor()
+
+
+try:
+	c.execute('''Create table "hashlist" ("ASCII" TEXT, "Deleted" TEXT, "MD5" TEXT, "SHA1" TEXT, "SHA224" TEXT, "SHA256" TEXT, "SHA384" TEXT, "SHA512" TEXT, "NTLM" TEXT);''')
+except:
+	print("")
+
+
+
+
 
 def insert_wordlist(wordlist):
 	if not os.path.isfile(wordlist):
