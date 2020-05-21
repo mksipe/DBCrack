@@ -1,4 +1,4 @@
-import sqlite3, argparse, os, hashlib, sys
+import sqlite3, argparse, os, hashlib, sys, tarfile, subprocess
 from sqlite3 import Error
 from tqdm import tqdm
 import multiprocessing
@@ -10,14 +10,6 @@ except Error as e:
 
 
 c = conn.cursor()
-
-try:
-	c.execute('''Create table "hashlist" ("ASCII" TEXT, "CALC" TEXT, "MD5" TEXT, "SHA1" TEXT, "SHA224" TEXT, "SHA256" TEXT, "SHA384" TEXT, "SHA512" TEXT, "NTLM" TEXT);''')
-	c.execute('''CREATE UNIQUE INDEX ID ON hashlist(ASCII)''')
-except:
-	print("")
-
-
 
 def insert_wordlist(wordlist):
 	if not os.path.isfile(wordlist):
