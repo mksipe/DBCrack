@@ -30,7 +30,7 @@ def insert_wordlist(wordlist):
 	else:
 		f = open(wordlist, "r")
 	count = 0
-	for line in f:
+	for line in tqdm(f):
 		if "Undelete" in line:
 			CALC = "Y"
 		else:
