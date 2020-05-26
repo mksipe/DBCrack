@@ -1,4 +1,6 @@
-import sqlite3, argparse, os, hashlib, sys, tarfile, subprocess
+#!/usr/bin/env python
+
+import sqlite3, argparse, os, hashlib, sys, tarfile, subprocess, base64
 from sqlite3 import Error
 from tqdm import tqdm
 import multiprocessing
@@ -13,7 +15,7 @@ c = conn.cursor()
 
 
 try:
-	c.execute('''Create table "hashlist" ("ASCII" TEXT, "CALC" TEXT, "MD5" TEXT, "SHA1" TEXT, "SHA224" TEXT, "SHA256" TEXT, "SHA384" TEXT, "SHA512" TEXT, "NTLM" TEXT);''')
+	c.execute('''Create table "hashlist" ("ASCII" TEXT, "CALC" TEXT, "BASE32" TEXT, "BASE64" TEXT, "MD5" TEXT, "SHA1" TEXT, "SHA224" TEXT, "SHA256" TEXT, "SHA384" TEXT, "SHA512" TEXT, "NTLM" TEXT);''')
 	c.execute('''CREATE UNIQUE INDEX "ID" ON "hashlist" ("ASCII");''')
 except:
 	print("")
@@ -50,7 +52,20 @@ def insert_wordlist(wordlist):
 
 
 def attack(string):
-
+	try:
+		c.execute('select * from hashlist where BASE32=?', (string,))
+		res = c.fetchall()
+		res = res[0][0]
+		print("BASE32  : " + string + ":" + res)
+	except:
+		pass
+	try:
+		c.execute('select * from hashlist where BASE64=?', (string,))
+		res = c.fetchall()
+		res = res[0][0]
+		print("BASE64  : " + string + ":" + res)
+	except:
+		pass
 	try:
 		c.execute('select * from hashlist where MD5=?', (string,))
 		conn.commit()
@@ -130,7 +145,8 @@ def batch(verify):
 	count = 0
 	for ASCII in tqdm(rows, desc="Batching", smoothing=0.1, unit=" w"):
 		ASCII 		= ASCII[0]
-		ASCII 		= ASCII.encode('utf-8')
+		BASE32		= base64.b32encode(ASCII)
+		BASE64		= base64.b64encode(ASCII)
 		MD5 		= hashlib.md5(ASCII).hexdigest()
 		SHA1 		= hashlib.sha1(ASCII).hexdigest()
 		SHA224 		= hashlib.sha224(ASCII).hexdigest()
@@ -138,6 +154,8 @@ def batch(verify):
 		SHA384 		= hashlib.sha384(ASCII).hexdigest()
 		SHA512 		= hashlib.sha512(ASCII).hexdigest()
 		NTLM 		= hashlib.new('md4', ASCII.encode('utf-16le')).hexdigest()
+		base32qry 	= "UPDATE hashlist SET BASE32 = ? WHERE ASCII = ?"
+		base64qry 	= "UPDATE hashlist SET BASE64 = ? WHERE ASCII = ?"
 		md5qry 		= "UPDATE hashlist SET MD5 = ? WHERE ASCII = ? "
 		sha1qry 	= "UPDATE hashlist SET SHA1 = ? WHERE ASCII = ? "
 		sha224qry 	= "UPDATE hashlist SET SHA224 = ? WHERE ASCII = ?"
@@ -145,6 +163,8 @@ def batch(verify):
 		sha384qry 	= "UPDATE hashlist SET SHA384 = ? WHERE ASCII = ?"
 		sha512qry 	= "UPDATE hashlist SET SHA512 = ? WHERE ASCII = ?"
 		NTLMqry 	= "UPDATE hashlist SET NTLM = ? WHERE ASCII = ?"
+		base32data  = (BASE32, ASCII)
+		base64data  = (BASE64, ASCII)
 		md5data 	= (MD5, ASCII)
 		sha1data 	= (SHA1, ASCII)
 		sha224data 	= (SHA224, ASCII)
@@ -152,6 +172,8 @@ def batch(verify):
 		sha384data 	= (SHA384, ASCII)
 		sha512data 	= (SHA512, ASCII)
 		ntlmdata 	= (NTLM, ASCII)
+		c.execute(base32qry, base32data)
+		c.execute(base64qry, base64data)
 		c.execute(md5qry, md5data)
 		c.execute(sha1qry, sha1data)
 		c.execute(sha224qry, sha224data)
@@ -167,13 +189,7 @@ def batch(verify):
 			conn.commit()
 			count= 0
 	print("Indexing database ...")
-	c.execute('''CREATE INDEX MD5 ON hashlist(MD5)''')
-	c.execute('''CREATE INDEX SHA1 ON hashlist(SHA1)''')
-	c.execute('''CREATE INDEX SHA224 ON hashlist(SHA224)''')
-	c.execute('''CREATE INDEX SHA256 ON hashlist(SHA256)''')
-	c.execute('''CREATE INDEX SHA384 ON hashlist(SHA384)''')
-	c.execute('''CREATE INDEX SHA512 ON hashlist(SHA512)''')
-	c.execute('''CREATE INDEX NTLM ON hashlist(NTLM)''')
+	c.execute('''CREATE UNIQUE INDEX "HASHED" ON "hashlist" ("MD5","SHA1","SHA224","SHA256","SHA384","SHA512", "NTLM");''')
 	conn.commit()
 	print("Done.")
 
@@ -187,10 +203,10 @@ def batch(verify):
 def main():
 
 	parser= argparse.ArgumentParser(usage="DBCrack.py [options]", description="Uses a database of pre-calulated hashes to make cracking faster.", prog="DBCrack.py")
-	parser.add_argument("-w", "--wordlist"		,help="adds a wordlist to the database.", 		type=insert_wordlist)
-	parser.add_argument("-b", "--batch"			,help="nashes all the words in the database.", 	type=batch)
-	parser.add_argument("-a", "--attack"		,help="compares a hash to the given database.",	type=attack)
-	parser.add_argument("-A", "--attack-list"	,help="compares a pwdump to the database",		type=attack_list)
+	parser.add_argument("-w", "--wordlist"		,help="adds a wordlist to the database.", 		type=insert_wordlist, nargs="+")
+	parser.add_argument("-b", "--batch"			,help="nashes all the words in the database.", 	type=batch,			nargs="+")
+	parser.add_argument("-a", "--attack"		,help="compares a hash to the given database.",	type=attack,			nargs="+")
+	parser.add_argument("-A", "--attack-list"	,help="compares a pwdump to the database",		type=attack_list,		nargs="+")
 	args = parser.parse_args()
 
 
