@@ -7,10 +7,13 @@ DISCLAIMER: This was a project just for fun and I have no intention of making th
 Warning: Does not work with Python3 very well.
 
 Supported hash formats:
-Base32,64
-SHA1,224,256,384,512
-MD5
-NTLM
+
+|Hashlib	|base	|
+|:-------------:|:-----:|
+|SHA1 - 512	|Base32 |
+|MD5		|Base64 |
+|NTLM		|       |
+
 
 ## Usage
 
