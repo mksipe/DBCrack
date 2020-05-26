@@ -2,7 +2,7 @@
 
 ## A reverse-hashing program
 
-Version 1.9
+Version 1.10
 
 DISCLAIMER: This was a project just for fun and I have no intention of making this into a full-on project. In other words, I will not be maintaining it.
 
@@ -10,11 +10,11 @@ Warning: Does not work with Python3 very well.
 
 Supported hash formats:
 
-|Hashlib	|Base	|PyBlake2|
-|:-------------:|:-----:|:------:|
-|SHA1 - 512	|Base32 |BLAKE2B |
-|MD5		|Base64 |BLAKE2S |
-|NTLM		|       |        |
+|Hashlib	|Base	|PyBlake2|HMAC|
+|:-------------:|:-----:|:------:|:--:|
+|SHA1 - 512	|Base32 |BLAKE2B |HMAC|
+|MD5		|Base64 |BLAKE2S |    |
+|NTLM		|       |        |    |
 
 
 ## Usage

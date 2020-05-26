@@ -4,4 +4,4 @@
 pyblake2 == 1.1.2
 
 # DBCrack/DBCrack.py: 5
-tqdm == 4.43.0
+tqdm == 4.28.1

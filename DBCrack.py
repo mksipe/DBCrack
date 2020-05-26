@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sqlite3, argparse, os, hashlib, sys, subprocess, base64, pyblake2
+import sqlite3, argparse, os, hashlib, sys, subprocess, base64, pyblake2, hmac
 from sqlite3 import Error
 from tqdm import tqdm
 
@@ -14,7 +14,7 @@ c = conn.cursor() # interaction with sqlite database
 
 
 try:
-	c.execute('''Create table "hashlist" ("ASCII" TEXT, "CALC" NUMERIC, "BASE32" TEXT, "BASE64" TEXT, "MD5" TEXT, "SHA1" TEXT, "SHA224" TEXT, "SHA256" TEXT, "SHA384" TEXT, "SHA512" TEXT, "NTLM" TEXT, "BLAKE2B" TEXT, "BLAKE2S" TEXT);''')  # Create the initial schema
+	c.execute('''Create table "hashlist" ("ASCII" TEXT, "CALC" NUMERIC, "BASE32" TEXT, "BASE64" TEXT, "MD5" TEXT, "SHA1" TEXT, "SHA224" TEXT, "SHA256" TEXT, "SHA384" TEXT, "SHA512" TEXT, "NTLM" TEXT, "BLAKE2B" TEXT, "BLAKE2S" TEXT, "HMAC" TEXT);''')  # Create the initial schema
 	c.execute('''CREATE UNIQUE INDEX "ID" ON "hashlist" ("ASCII");''') # make importing terms faster with an index which is unique to avoid duplicate terms
 except:
 	print("") # If it fails to do so, print nothing.
@@ -135,7 +135,13 @@ def attack(string): # attack an individual string.
 		print("BLAKE2S  : " + string + ":" + res)
 	except:
 		pass
-
+	try:
+		c.execute('select * from hashlist where HMAC=?', (string,))
+		res = c.fetchall()
+		res = res[0][0]
+		print("HMAC  : " + string + ":" + res)
+	except:
+		pass
 
 def attack_list(pwdump): # use a list to attack instead of the individual hash.
 	f = open(pwdump, "r") # open the file as read-only
@@ -169,6 +175,7 @@ def batch(verify): # batching the database
 		NTLM 		= hashlib.new('md4', ASCII.encode('utf-16le')).hexdigest() # encode the string in NTLM
 		BLAKE2B 	= pyblake2.blake2b(ASCII.encode('utf-8')).hexdigest()
 		BLAKE2S 	= pyblake2.blake2s(ASCII.encode('utf-8')).hexdigest()
+		HMAC		= hmac.new(ASCII.encode('utf-8')).hexdigest()
 		base32qry 	= "UPDATE hashlist SET BASE32 = ? WHERE ASCII = ?" # make a query to update the current string to have its alternative forms as an entry.
 		base64qry 	= "UPDATE hashlist SET BASE64 = ? WHERE ASCII = ?" # ...
 		md5qry 		= "UPDATE hashlist SET MD5 = ? WHERE ASCII = ? "
@@ -180,6 +187,7 @@ def batch(verify): # batching the database
 		NTLMqry 	= "UPDATE hashlist SET NTLM = ? WHERE ASCII = ?"
 		BLAKE2Bqry 	= "UPDATE hashlist SET BLAKE2B = ? WHERE ASCII = ?"
 		BLAKE2Sqry 	= "UPDATE hashlist SET BLAKE2S = ? WHERE ASCII = ?"
+		HMACqry 	= "UPDATE hashlist SET HMAC = ? WHERE ASCII = ?"
 		base32data      = (BASE32, ASCII) # the command that will combine both to apply the change of the entry.
 		base64data      = (BASE64, ASCII) # ...
 		md5data 	= (MD5, ASCII)
@@ -189,8 +197,9 @@ def batch(verify): # batching the database
 		sha384data 	= (SHA384, ASCII)
 		sha512data 	= (SHA512, ASCII)
 		ntlmdata 	= (NTLM, ASCII)
-		blake2bdata     = (BLAKE2B, ASCII)
-		blake2sdata     = (BLAKE2S, ASCII)
+		blake2bdata = (BLAKE2B, ASCII)
+		blake2sdata = (BLAKE2S, ASCII)
+		hmacdata   	= (HMAC, ASCII)
 		c.execute(base32qry, base32data) # execute the query.
 		c.execute(base64qry, base64data) # ...
 		c.execute(md5qry, md5data)
@@ -202,6 +211,7 @@ def batch(verify): # batching the database
 		c.execute(NTLMqry, ntlmdata)
 		c.execute(BLAKE2Bqry, blake2bdata)
 		c.execute(BLAKE2Sqry, blake2sdata)
+		c.execute(HMACqry, hmacdata)
 		update  = "UPDATE hashlist SET CALC=? WHERE ASCII = ? " # set the row CALC to 1 as it doesn't need to be hashed again.
 		updatedata = ("1", ASCII)
 		c.execute(update, updatedata)
@@ -210,7 +220,7 @@ def batch(verify): # batching the database
 			conn.commit() # commit the changes.
 			count= 0
 	print("Indexing database ...")
-	c.execute('''CREATE UNIQUE INDEX "HASHED" ON "hashlist" ("BASE32","BASE64","MD5","SHA1","SHA224","SHA256","SHA384","SHA512", "NTLM", "BLAKE2B", "BLAKE2S");''') # index the changes as it will make searching MUCH faster.
+	c.execute('''CREATE UNIQUE INDEX "HASHED" ON "hashlist" ("BASE32","BASE64","MD5","SHA1","SHA224","SHA256","SHA384","SHA512", "NTLM", "BLAKE2B", "BLAKE2S", "HMAC");''') # index the changes as it will make searching MUCH faster.
 	conn.commit() # commit changes
 	print("Done.")
 
