@@ -15,7 +15,7 @@ c = conn.cursor()
 
 
 try:
-	c.execute('''Create table "hashlist" ("ASCII" TEXT, "CALC" TEXT, "BASE32" TEXT, "BASE64" TEXT, "MD5" TEXT, "SHA1" TEXT, "SHA224" TEXT, "SHA256" TEXT, "SHA384" TEXT, "SHA512" TEXT, "NTLM" TEXT);''')
+	c.execute('''Create table "hashlist" ("ASCII" TEXT, "CALC" NUMERIC, "BASE32" TEXT, "BASE64" TEXT, "MD5" TEXT, "SHA1" TEXT, "SHA224" TEXT, "SHA256" TEXT, "SHA384" TEXT, "SHA512" TEXT, "NTLM" TEXT);''')
 	c.execute('''CREATE UNIQUE INDEX "ID" ON "hashlist" ("ASCII");''')
 except:
 	print("")
@@ -34,9 +34,9 @@ def insert_wordlist(wordlist):
 	count = 0
 	for line in tqdm(f):
 		if "Undelete" in line:
-			CALC = "Y"
+			CALC = "1"
 		else:
-			CALC = "N"
+			CALC = "0"
 		word = line.split("Edit")[0]
 		word = word.rstrip()
 		word = word.strip()
@@ -140,7 +140,7 @@ def batch(verify):
 		print("Use the same command with 'OK' to verify you have enough storage.")
 		exit(1)
 
-	c.execute("""SELECT DISTINCT ASCII FROM hashlist WHERE CALC='N'""")
+	c.execute("""SELECT DISTINCT ASCII FROM hashlist WHERE CALC='0'""")
 	rows = c.fetchall()
 	count = 0
 	for ASCII in tqdm(rows, desc="Batching", smoothing=0.1, unit=" w"):
@@ -182,14 +182,14 @@ def batch(verify):
 		c.execute(sha512qry, sha512data)
 		c.execute(NTLMqry, ntlmdata)
 		update  = "UPDATE hashlist SET CALC=? WHERE ASCII = ? "
-		updatedata = ("Y", ASCII)
+		updatedata = ("1", ASCII)
 		c.execute(update, updatedata)
 		count +=1
 		if count == 1000:
 			conn.commit()
 			count= 0
 	print("Indexing database ...")
-	c.execute('''CREATE UNIQUE INDEX "HASHED" ON "hashlist" ("MD5","SHA1","SHA224","SHA256","SHA384","SHA512", "NTLM");''')
+	c.execute('''CREATE UNIQUE INDEX "HASHED" ON "hashlist" ("BASE32","BASE64","MD5","SHA1","SHA224","SHA256","SHA384","SHA512", "NTLM");''')
 	conn.commit()
 	print("Done.")
 
