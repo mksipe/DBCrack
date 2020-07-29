@@ -1,0 +1,8 @@
+[package]
+name = "DBCrack"
+version = "0.1.5"
+authors = ["Mason Sipe <m-sipe@protonmail.com>"]
+edition = "2018"
+
+[dependencies]
+rusqlite = { version = "*", features = ["bundled"] }
