@@ -21,7 +21,8 @@ fn main()
         } else if s == "2"{
             println!("Under Development.");
         } else if s == "3" {
-            println!("Under Development.")
+            messages::attack_menu();
+            //actions toward selection in options to add here.
         } else if s == "0" {
             messages::epilogue();
             std::process::exit(1);

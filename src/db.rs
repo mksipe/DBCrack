@@ -27,13 +27,8 @@ struct wordlists {
 }
 pub fn show_wordlists() {
     let conn = Connection::open("operation.db").unwrap();
-    let mut stmt = conn.prepare("SELECT * FROM wordlists;");
-    let output = stmt.query_map(NO_PARAMS, |row| {
-        Ok(wordlists {
-            path: row.get(0),
-        })
-    });
-    for i in (wordlists {
-        println!("{})", i);
+    let mut d = conn.prepare("SELECT * FROM wordlists;").unwrap();
+    // INSERT OPTION TO BE ABLE TO SEE CONTENTS
+    crate::messages::wordlist_choices();
+    crate::options::option_1();
     }
-}

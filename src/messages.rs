@@ -31,3 +31,10 @@ pub fn abort(){
 pub fn wordlists_loaded() {
     println!("######## DBCrack > Wordlists > Loaded  ########");
 }
+
+pub fn attack_menu() {
+    println!("######## DBCrack > Attack              ########");
+    println!("[1]       - Attack a single hash");
+    println!("[2]       - Attack a hashdump");
+    println!("[0]       - Return to menu");
+}
