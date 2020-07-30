@@ -31,4 +31,4 @@ pub fn show_wordlists() {
     // INSERT OPTION TO BE ABLE TO SEE CONTENTS
     crate::messages::wordlist_choices();
     crate::options::option_1();
-    }
+    
