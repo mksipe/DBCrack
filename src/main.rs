@@ -1,6 +1,10 @@
 mod messages;
 mod options;
 mod db;
+extern crate pbr;
+
+use pbr::ProgressBar;
+use std::thread;
 
 fn main()
 {
@@ -23,6 +27,7 @@ fn main()
         } else if s == "3" {
             messages::attack_menu();
             //actions toward selection in options to add here.
+            crate::main();
         } else if s == "0" {
             messages::epilogue();
             std::process::exit(1);

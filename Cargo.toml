@@ -5,4 +5,5 @@ authors = ["Mason Sipe <m-sipe@protonmail.com>"]
 edition = "2018"
 
 [dependencies]
-rusqlite = { version = "*", features = ["bundled"] }
+rusqlite = { version = "0.23.1", features = ["bundled"] }
+pbr = "1.0.3" 

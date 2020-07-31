@@ -1,11 +1,11 @@
 
-use rusqlite::{ Connection, NO_PARAMS, Result };
+use rusqlite::{Connection, NO_PARAMS, Result};
 use std::collections::HashMap;
 
 pub fn init_sqlite() {
     let conn = Connection::open("operation.db").unwrap();
     conn.execute("CREATE TABLE IF NOT EXISTS wordlists (path TEXT);", NO_PARAMS).unwrap();
-    conn.execute("CREATE TABLE IF NOT EXISTS hashtable (ascii TEXT, md5 TEXT);", NO_PARAMS).unwrap();
+    conn.execute("CREATE TABLE IF NOT EXISTS hashtable (ascii TEXT, calc NUMERIC, md5 TEXT);", NO_PARAMS).unwrap();
 }
 
 pub fn enhance_sqlite(){
@@ -22,13 +22,14 @@ pub fn insert_db(term:String) {
     let conn = Connection::open("operation.db").unwrap();
     conn.execute("INSERT INTO hashtable (ascii) VALUES (?1)", &[term]).unwrap();
 }
-struct wordlists {
-    path: String,
-}
+
 pub fn show_wordlists() {
+    #[derive(Debug)]
+    struct wordlists {
+        path: String,
+    }
     let conn = Connection::open("operation.db").unwrap();
-    let mut d = conn.prepare("SELECT * FROM wordlists;").unwrap();
-    // INSERT OPTION TO BE ABLE TO SEE CONTENTS
+    let prep = conn.prepare("SELECT * FROM wordlists");
     crate::messages::wordlist_choices();
     crate::options::option_1();
-    
+}
