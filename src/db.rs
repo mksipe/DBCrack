@@ -33,7 +33,7 @@ pub fn show_wordlists() {
     })).unwrap();
     for i in data {
         println!("Found: {:?}", i);
-        crate::messages::wordlist_choices();
     }
+    crate::messages::wordlist_choices();
     crate::options::option_1();
 }
