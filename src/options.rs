@@ -1,11 +1,7 @@
 use std::path::Path;
 use std::io::Read;
-use std::io::prelude::*;
 use rusqlite::{ Connection };
 extern crate pbr;
-use pbr::ProgressBar;
-use std::thread;
-
 fn home() {
     super::main();
 }
@@ -37,8 +33,6 @@ fn add_wordlist () {
         crate::options::add_wordlist();
     } else if Path::new(&s).exists() == true {
         let count = 1000;
-        let mut pb = ProgressBar::new(count);
-        pb.format("╢▌▌░╟");
         println!("\n File {} locked. Retrieving contents ...", s);
         let mut file = std::fs::File::open(&s).unwrap();
         let _conn = Connection::open("operation.db").unwrap();
@@ -47,10 +41,7 @@ fn add_wordlist () {
         let split = contents.split("\n");
         for i in split {
             crate::db::insert_db(i.to_string());
-            pb.inc();
-            thread::sleep_ms(0);
         }
-        pb.finish_print(" ... Done");
         calc_data(&s);
         crate::db::enhance_sqlite();
         crate::options::option_1();
@@ -60,10 +51,10 @@ fn add_wordlist () {
 pub fn option_1() {
     crate::db::init_sqlite();
     let _s = "";
-    use std::io::{stdin,stdout,Write};
+    use std::io::{stdin,stdout};
     let mut s=String::new();
     print!("Enter an option: ");
-    let _=stdout().flush();
+    let _=stdout();
     stdin().read_line(&mut s).expect("Did not enter a correct string");
     if let Some('\n')=s.chars().next_back() {
         s.pop();

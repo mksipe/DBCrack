@@ -3,8 +3,6 @@ mod options;
 mod db;
 extern crate pbr;
 
-use pbr::ProgressBar;
-use std::thread;
 
 fn main()
 {

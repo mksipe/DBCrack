@@ -1,6 +1,4 @@
-
-use rusqlite::{Connection, NO_PARAMS, Result};
-use std::collections::HashMap;
+use rusqlite::{Connection, NO_PARAMS};
 
 pub fn init_sqlite() {
     let conn = Connection::open("operation.db").unwrap();
@@ -25,11 +23,17 @@ pub fn insert_db(term:String) {
 
 pub fn show_wordlists() {
     #[derive(Debug)]
-    struct wordlists {
+    struct Loaded {
         path: String,
     }
     let conn = Connection::open("operation.db").unwrap();
-    let prep = conn.prepare("SELECT * FROM wordlists");
-    crate::messages::wordlist_choices();
+    let mut _prep = conn.prepare("SELECT * FROM wordlists").unwrap();
+    let data = _prep.query_map(NO_PARAMS, |row| Ok(Loaded {
+        path: row.get_unwrap(0),
+    })).unwrap();
+    for i in data {
+        println!("Found: {:?}", i);
+        crate::messages::wordlist_choices();
+    }
     crate::options::option_1();
 }
