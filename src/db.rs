@@ -32,7 +32,7 @@ pub fn show_wordlists() {
         path: row.get_unwrap(0),
     })).unwrap();
     for i in data {
-        println!("Found: {:?}", i);
+        println!("Loaded: {:?}", i);
     }
     crate::messages::wordlist_choices();
     crate::options::option_1();

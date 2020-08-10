@@ -1,14 +1,9 @@
 use std::path::Path;
 use std::io::Read;
-use rusqlite::{ Connection };
-extern crate pbr;
 fn home() {
     super::main();
 }
-fn calc_data(s: &String) {
-    let conn = Connection::open("operation.db").unwrap();
-    conn.execute("INSERT INTO wordlists (path) VALUES (?1)", &[&s]).unwrap();
-}
+
 fn add_wordlist () {
     crate::messages::wordlist_add();
     crate::db::init_sqlite();
@@ -32,28 +27,25 @@ fn add_wordlist () {
         }
         crate::options::add_wordlist();
     } else if Path::new(&s).exists() == true {
-        let count = 1000;
         println!("\n File {} locked. Retrieving contents ...", s);
         let mut file = std::fs::File::open(&s).unwrap();
-        let _conn = Connection::open("operation.db").unwrap();
         let mut contents = String::new();
         file.read_to_string(&mut contents);
         let split = contents.split("\n");
         for i in split {
             crate::db::insert_db(i.to_string());
         }
-        calc_data(&s);
         crate::db::enhance_sqlite();
         crate::options::option_1();
     } 
 }
 
 pub fn option_1() {
+    println!("Enter an option: ");
     crate::db::init_sqlite();
     let _s = "";
     use std::io::{stdin,stdout};
     let mut s=String::new();
-    print!("Enter an option: ");
     let _=stdout();
     stdin().read_line(&mut s).expect("Did not enter a correct string");
     if let Some('\n')=s.chars().next_back() {
@@ -67,11 +59,12 @@ pub fn option_1() {
         } else if s == "2" {
             crate::messages::wordlists_loaded();
             crate::db::show_wordlists();
+            crate::options::option_1();
             } else if s == "0" {
                 home();
             } else if s == "" {
                 println!(":/");
-                crate::main();
+                option_1();
             } else {
                 println!("{} did not match any valid protocols.",s);
                 crate::main();
