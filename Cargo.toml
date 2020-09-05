@@ -5,4 +5,4 @@ authors = ["Mason Sipe <m-sipe@protonmail.com>"]
 edition = "2018"
 
 [dependencies]
-clap = "2.33.3"
+clap = {version = "~2.27.0", features = ["yaml"]}

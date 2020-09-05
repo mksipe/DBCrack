@@ -1,0 +1,28 @@
+name: DBCrack
+version: "2.0.2"
+author: Mason Sipe <m-sipe@protonmail.com>
+about: Does awesome things
+args:
+    - wordlist:
+        short: w
+        long: import-wordlist
+        value_name: WORDLIST
+        help: Imports a wordlist location to the database.
+        takes_value: true
+    - batch:
+        short: b
+        long: batch
+        takes_value: false
+        help: Imports wordlists into the database. Then Hashes them into their appropriate table.
+    - single hash:
+        short: a
+        long: attack
+        takes_value: true
+        help: Attacks a single hash from STDIN.
+        value_name: HASH
+    - PWDUMP:
+        short: A
+        long: attack-file
+        takes_value: true
+        value_name: FILE
+        help: Attacks a list of hashes.
