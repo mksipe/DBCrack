@@ -1,7 +1,7 @@
 name: DBCrack
-version: "2.0.5"
-author: Mason Sipe <m-sipe@protonmail.com>
-about:  A database-driven reverse hash lookup program.
+version: "2.0.6"
+author: Copyright (C) 2020 Mason Sipe <m-sipe@protonmail.com> 
+about: This program comes with ABSOLUTELY NO WARRANTY and is free software. You are welcome to redistribute it under certain conditions.
 args:
     - wordlist:
         short: w
