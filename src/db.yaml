@@ -1,0 +1,13 @@
+sqlite3:
+  wordlists:
+    path: varchar
+    imported: bool
+    words: varchar
+  hashtable:
+    ASCII: varchar
+    MD5: varchar
+  options:
+    vacuum: bool
+    indexed: bool
+    
+    

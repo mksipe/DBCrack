@@ -1,4 +1,4 @@
-mod file_exists;
+mod readiness;
 #[macro_use]
 extern crate clap;
 use clap::App;
@@ -29,7 +29,8 @@ fn main() {
         println!("{}", "[ DISABLED ] PWDUMP Attack")
     }
     println!("{}", "\nReadiness Information:\n");
-    file_exists::db_exists();
+    readiness::db_exists();
+    readiness::db_scheme_exists();
     //This is where the actual application of the arguments take place.
     if matches.is_present("wordlist") {
 

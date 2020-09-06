@@ -7,3 +7,10 @@ pub fn db_exists() {
         println!("{}", "[ DISABLED ] Database Ready")
     }
 }
+pub fn db_scheme_exists() {
+    if Path::new("db.yaml").exists() == true {
+        println!("{}", "[ ENABLED  ] Database Scheme Present")
+    } else {
+        println!("{}", "[ DISABLED ] Database Scheme Present")
+    }
+}
