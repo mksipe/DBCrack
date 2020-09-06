@@ -1,7 +1,7 @@
 name: DBCrack
-version: "2.0.2"
+version: "2.0.3"
 author: Mason Sipe <m-sipe@protonmail.com>
-about: Does awesome things
+about:  A database-driven reverse hash lookup program.
 args:
     - wordlist:
         short: w
