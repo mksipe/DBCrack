@@ -25,33 +25,33 @@ fn main() {
     println!("{}", "\nArguments Selected:\n");
     // This will check to see what is already selected to be displayed. 
     if matches.is_present("wordlist") {
-        println!("{}", "[ ENABLED  ] Wordlist Addition");
+        println!("{}", "[ ENABLED  ] Wordlist addition");
     } else {
-        println!("{}", "[ DISABLED ] Wordlist Addition")
+        println!("{}", "[ DISABLED ] Wordlist addition")
     }
     if matches.is_present("batch") {
-        println!("{}", "[ ENABLED  ] Batch Database");
+        println!("{}", "[ ENABLED  ] Batch database");
     } else {
-        println!("{}", "[ DISABLED ] Batch Database")
+        println!("{}", "[ DISABLED ] Batch database")
     }
     if matches.is_present("single hash") {
-        println!("{}", "[ ENABLED  ] Single Hash Attack");
+        println!("{}", "[ ENABLED  ] Single hash attack");
     } else {
-        println!("{}", "[ DISABLED ] Single Hash Attack")
+        println!("{}", "[ DISABLED ] Single hash attack")
     }
     if matches.is_present("PWDUMP") {
-        println!("{}", "[ ENABLED  ] PWDUMP Attack");
+        println!("{}", "[ ENABLED  ] PWDUMP attack");
     } else {
-        println!("{}", "[ DISABLED ] PWDUMP Attack")
+        println!("{}", "[ DISABLED ] PWDUMP attack")
     }
     println!("{}", "\nReadiness Information:\n");
     readiness::db_exists();
+    readiness::locked();
     //This is where the actual application of the arguments take place.
     if matches.is_present("wordlist") {
         wordlist::main();
         let file: &str  = matches.value_of("wordlist").unwrap();
         wordlist::add(file);
-
     }
     if matches.is_present("batch") {
     }

@@ -15,15 +15,16 @@ use std::path::Path;
 
 pub fn db_exists() {
     if Path::new("db.sqlite3").exists() == true {
-        println!("{}", "[ ENABLED  ] Database Ready")
+        println!("{}", "[ ENABLED  ] Database ready")
     } else {
-        println!("{}", "[ DISABLED ] Database Ready")
+        println!("{}", "[ DISABLED ] Database ready")
     }
 }
-pub fn db_scheme_exists() {
-    if Path::new("db.yaml").exists() == true {
-        println!("{}", "[ ENABLED  ] Database Scheme Present")
+
+pub fn locked(){
+    if Path::new("db.sqlite3-journal").exists() == true {
+        println!("{}", "[ LOCKED   ] Database is free?")
     } else {
-        println!("{}", "[ DISABLED ] Database Scheme Present")
+        println!("{}", "[ UNLOCKED ] Database is free?")
     }
 }

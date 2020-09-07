@@ -50,5 +50,6 @@ pub fn add(value: &str) {
         let countstr = count.to_string();
         let counter: &str = &countstr;
         conn.execute("INSERT INTO wordlists(PATH, WORDS) VALUES (?1, ?2)", &[&value, &counter]).unwrap();
+        conn.execute("delete from wordlists where rowid NOT IN (SELECT MIN(rowid) from wordlists group by PATH)", NO_PARAMS).unwrap(); // remove duplicate paths.
     }
 }
