@@ -13,6 +13,8 @@
 
 
 mod readiness;
+mod wordlist;
+
 #[macro_use]
 extern crate clap;
 use clap::App;
@@ -44,25 +46,18 @@ fn main() {
     }
     println!("{}", "\nReadiness Information:\n");
     readiness::db_exists();
-    readiness::db_scheme_exists();
     //This is where the actual application of the arguments take place.
     if matches.is_present("wordlist") {
-
-    } else {
+        wordlist::main();
+        let file: &str  = matches.value_of("wordlist").unwrap();
+        wordlist::add(file);
 
     }
     if matches.is_present("batch") {
-
-    } else {
-
     }
     if matches.is_present("single hash") {
-    } else {
-
-    }
+    } 
     if matches.is_present("PWDUMP") {
 
-    } else {
-
-    }
+    } 
 }
