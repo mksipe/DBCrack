@@ -3,7 +3,8 @@ use std::path::Path;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::convert::TryInto;
-use std::io::Read;
+//use std::io::Read;
+//use std::ffi::{OsString, OsStr};
 
 fn init() {
     let conn = Connection::open("db.sqlite3").unwrap();
@@ -43,10 +44,7 @@ pub fn add(value: &str) {
     let file = File::open(value).unwrap();
     let buff = BufReader::new(&file);
     for (index, line) in buff.lines().enumerate(){
-        let mut ifile = File::open(value).expect("Unable to open file");
-        let mut file_content = Vec::new();
-        ifile.read_to_end(&mut file_content).expect("Unable to read");
-        let _line = line.unwrap();
+        let ifile = File::open(value).expect("Unable to open file");
         unsafe{COUNT = ((index + 1)).try_into().unwrap();}
     }
     unsafe {
