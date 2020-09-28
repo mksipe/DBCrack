@@ -43,8 +43,8 @@ pub fn add(value: &str) {
     let conn = Connection::open("db.sqlite3").unwrap();
     let file = File::open(value).unwrap();
     let buff = BufReader::new(&file);
-    for (index, line) in buff.lines().enumerate(){
-        let ifile = File::open(value).expect("Unable to open file");
+    for (index, _line) in buff.lines().enumerate(){
+        let _ifile = File::open(value).expect("Unable to open file");
         unsafe{COUNT = ((index + 1)).try_into().unwrap();}
     }
     unsafe {
