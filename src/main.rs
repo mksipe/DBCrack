@@ -58,6 +58,8 @@ fn main() {
     if matches.is_present("single hash") {
     } 
     if matches.is_present("PWDUMP") {
-
     } 
+    if matches.is_present("show_wordlist") {
+        wordlist::show_wordlists();
+    }
 }

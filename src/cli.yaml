@@ -26,3 +26,8 @@ args:
         takes_value: true
         value_name: FILE
         help: Attacks a list of hashes.
+    - show_wordlist:
+        short: s
+        long: show-wordlists
+        takes_value: false
+        help: Shows wordlists loaded into the database.

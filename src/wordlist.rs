@@ -3,20 +3,22 @@ use std::path::Path;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::convert::TryInto;
+
 //use std::io::Read;
 //use std::ffi::{OsString, OsStr};
 
+
 fn init() {
     let conn = Connection::open("db.sqlite3").unwrap();
-    conn.execute("CREATE TABLE hashtable(
-        id INTERGER PRIMARY KEY,
-        ASCII TEXT,
-        MD5 TEXT
+    conn.execute("CREATE TABLE hashtable (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ASCII text NOT NULL,
+        MD5 text NOT NULL
     )", NO_PARAMS).unwrap();
-    conn.execute("CREATE TABLE wordlists(
-        id INTERGER PRIMARY KEY,
-        PATH TEXT,
-        WORDS INTERGER
+    conn.execute("CREATE TABLE wordlists (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        PATH text NOT NULL,
+        WORDS text NOT NULL
     )", NO_PARAMS).unwrap();
 
     // let ASCII: String = "Steve Example".to_string();
@@ -40,18 +42,45 @@ pub fn main(){
 
 
 pub fn add(value: &str) {
-    let mut COUNT: i64 = 0;
+    let mut count: i64 = 0;
     let conn = Connection::open("db.sqlite3").unwrap();
     let file = File::open(value).unwrap();
     let buff = BufReader::new(&file);
     for (index, _line) in buff.lines().enumerate(){
         let _ifile = File::open(value).expect("Unable to open file");
-        COUNT = ((index + 1)).try_into().unwrap();
+        count = ((index + 1)).try_into().unwrap();
     }
     
-    let countstr = COUNT.to_string();
+    let countstr = count.to_string();
     let counter: &str = &countstr;
     conn.execute("INSERT INTO wordlists(PATH, WORDS) VALUES (?1, ?2)", &[&value, &counter]).unwrap();
     conn.execute("delete from wordlists where rowid NOT IN (SELECT MIN(rowid) from wordlists group by PATH)", NO_PARAMS).unwrap(); // remove duplicate paths.
     
+}
+
+
+
+pub fn show_wordlists() -> rusqlite::Result<()> {
+    check_db();
+    #[derive(Debug)]
+    struct Wordlists {
+        id: i32,
+        name: String,
+        words: String,
+    }
+    let conn = Connection::open("db.sqlite3")?;
+    let mut statement = conn.prepare("SELECT * FROM wordlists")?;
+    let iter = statement.query_map(NO_PARAMS, |row| {
+        Ok(Wordlists{
+            id: row.get(0)?,
+            name: row.get(1)?,
+            words: row.get(2)?,
+        })
+    })?;
+
+    for i in iter {
+        println!("{:?}", i);
+    }
+    Ok(())
+
 }
