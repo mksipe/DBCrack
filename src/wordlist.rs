@@ -77,9 +77,11 @@ pub fn show_wordlists() -> rusqlite::Result<()> {
             words: row.get(2)?,
         })
     })?;
-
+    println!("{}", "Table   |   Words:Path");
     for i in iter {
-        println!("{:?}", i);
+        for i in i {
+            println!("{:?}       |    {:?}:{:?}", i.id, i.words, i.name);
+        }
     }
     Ok(())
 
