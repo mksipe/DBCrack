@@ -65,10 +65,12 @@ The requirements for this program to work is rustc and cargo. The program will a
 |rusqlite|0.24.0|bundled|
 |md-5|0.9.1||
 |hex|0.4.2||
-
+|md2|0.9.0||
+|md4|0.9.0||
 
 ### Supported hash formats: 
-
+- MD2
+- MD4
 - MD5
 
 ---
