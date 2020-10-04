@@ -12,7 +12,7 @@
     - [Attacking a single hash](#attacking-a-single-hash)
     - [Attacking a PWDUMP](#attacking-a-pwdump)
   - [Software Information](#software-information)
-    - [Version 2.2.1](#version-221)
+    - [Version 2.3.3](#version-233)
     - [Requirements:](#requirements)
     - [Supported hash formats:](#supported-hash-formats)
   
@@ -54,7 +54,7 @@ Batching is a required and crucial part of this program to work correctly. Batch
 
 ## Software Information
 
-### Version 2.2.1
+### Version 2.3.3
 
 ### Requirements: 
 The requirements for this program to work is rustc and cargo. The program will automatically parse the Cargo.toml file, which will install the dependencies from crates.io. If you, for some reason, need to install them manually, Here is the list of currently requires packages:
@@ -63,7 +63,8 @@ The requirements for this program to work is rustc and cargo. The program will a
 |:-:|:-:|:-:|
 |clap|2.33.3|yaml|
 |rusqlite|0.24.0|bundled|
-
+|md-5|0.9.1||
+|hex|0.4.2||
 
 
 ### Supported hash formats: 

@@ -1,10 +1,10 @@
 use rusqlite::{ Connection, NO_PARAMS };
-use std::path::{Path, PathBuf};
+use std::path::{Path};
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::convert::TryInto;
 use std::process;
-use std::fs;
+
 //use std::io::Read;
 //use std::ffi::{OsString, OsStr};
 
@@ -111,12 +111,13 @@ pub fn batch() -> rusqlite::Result<()> {
     })?;
     for i in iter {
         for i in i {
-            let mut file   = File::open(i.name).unwrap();
-            let mut reader = BufReader::new(file);
-            for (index, line) in reader.lines().enumerate() {
+            let file   = File::open(i.name).unwrap();
+            let reader = BufReader::new(file);
+            for (_index, line) in reader.lines().enumerate() {
                 let line = line.unwrap();
                 conn.execute("INSERT INTO hashtable (ASCII) VALUES (?1)", &[&line]).unwrap();
                 conn.execute("delete from hashtable where rowid NOT IN (SELECT MIN(rowid) from hashtable group by ASCII)", NO_PARAMS).unwrap(); // remove duplicate paths.
+                conn.execute("CREATE INDEX 'IDEX' ON 'hashtable' ('id'	ASC);", NO_PARAMS);
             }
         }
     }

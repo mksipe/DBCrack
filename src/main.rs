@@ -14,6 +14,8 @@
 
 mod readiness;
 mod wordlist;
+mod crypto;
+
 
 #[macro_use]
 extern crate clap;
@@ -55,6 +57,7 @@ fn main() {
     }
     if matches.is_present("batch") {
         wordlist::batch();
+        crypto::main();
     }
     if matches.is_present("single hash") {
     } 
