@@ -19,7 +19,6 @@ pub fn db_exists() {
         println!("{}", "[ ENABLED  ] Database ready")
     } else {
         println!("{}", "[ DISABLED ] Database ready");
-        process::exit(1);
 
     }
 }
