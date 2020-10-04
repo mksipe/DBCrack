@@ -116,6 +116,7 @@ pub fn batch() -> rusqlite::Result<()> {
             for (index, line) in reader.lines().enumerate() {
                 let line = line.unwrap();
                 conn.execute("INSERT INTO hashtable (ASCII) VALUES (?1)", &[&line]).unwrap();
+                conn.execute("delete from hashtable where rowid NOT IN (SELECT MIN(rowid) from hashtable group by ASCII)", NO_PARAMS).unwrap(); // remove duplicate paths.
             }
         }
     }
