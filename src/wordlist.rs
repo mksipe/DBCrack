@@ -1,9 +1,10 @@
 use rusqlite::{ Connection, NO_PARAMS };
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::convert::TryInto;
-
+use std::process;
+use std::fs;
 //use std::io::Read;
 //use std::ffi::{OsString, OsStr};
 
@@ -12,8 +13,8 @@ fn init() {
     let conn = Connection::open("db.sqlite3").unwrap();
     conn.execute("CREATE TABLE hashtable (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        ASCII text NOT NULL,
-        MD5 text NOT NULL
+        ASCII text,
+        MD5 text
     )", NO_PARAMS).unwrap();
     conn.execute("CREATE TABLE wordlists (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -81,6 +82,41 @@ pub fn show_wordlists() -> rusqlite::Result<()> {
     for i in iter {
         for i in i {
             println!("{:?}       |    {:?}:{:?}", i.id, i.words, i.name);
+        }
+    }
+    Ok(())
+
+}
+
+pub fn batch() -> rusqlite::Result<()> {
+        if Path::new("db.sqlite3").exists() == true {
+    } else {
+        println!("{}", "\nYou must create a database before you can batch one.");
+        process::exit(1);
+    }
+        #[derive(Debug)]
+    struct Wordlists {
+        id: i32,
+        name: String,
+        words: String,
+    }
+    let conn = Connection::open("db.sqlite3")?;
+    let mut statement = conn.prepare("SELECT * FROM wordlists")?;
+    let iter = statement.query_map(NO_PARAMS, |row| {
+        Ok(Wordlists{
+            id: row.get(0)?,
+            name: row.get(1)?,
+            words: row.get(2)?,
+        })
+    })?;
+    for i in iter {
+        for i in i {
+            let mut file   = File::open(i.name).unwrap();
+            let mut reader = BufReader::new(file);
+            for (index, line) in reader.lines().enumerate() {
+                let line = line.unwrap();
+                conn.execute("INSERT INTO hashtable (ASCII) VALUES (?1)", &[&line]).unwrap();
+            }
         }
     }
     Ok(())

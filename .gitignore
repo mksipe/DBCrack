@@ -1,3 +1,4 @@
 /target
 cargo.lock
 db.sqlite3
+.DS_Store

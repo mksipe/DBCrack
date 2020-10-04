@@ -54,6 +54,7 @@ fn main() {
         wordlist::add(file);
     }
     if matches.is_present("batch") {
+        wordlist::batch();
     }
     if matches.is_present("single hash") {
     } 
