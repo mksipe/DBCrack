@@ -69,5 +69,6 @@ The requirements for this program to work is rustc and cargo. The program will a
 
 ### Supported hash formats: 
 
+- MD5
 
 ---

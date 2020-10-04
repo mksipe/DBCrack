@@ -12,19 +12,24 @@
 //    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 use std::path::Path;
+use std::process;
 
 pub fn db_exists() {
     if Path::new("db.sqlite3").exists() == true {
         println!("{}", "[ ENABLED  ] Database ready")
     } else {
-        println!("{}", "[ DISABLED ] Database ready")
+        println!("{}", "[ DISABLED ] Database ready");
+        process::exit(1);
+
     }
 }
 
 pub fn locked(){
     if Path::new("db.sqlite3-journal").exists() == true {
-        println!("{}", "[ LOCKED   ] Database is free?")
+        println!("{}", "[ LOCKED   ] Database is free?");
+        process::exit(1);
+
     } else {
-        println!("{}", "[ UNLOCKED ] Database is free?")
+        println!("{}", "[ UNLOCKED ] Database is free?\n")
     }
 }
