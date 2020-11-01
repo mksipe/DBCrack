@@ -1,13 +1,8 @@
 [package]
 name = "dbcrack"
-version = "0.1.5"
+version = "3.0.0"
 authors = ["Mason Sipe <m-sipe@protonmail.com>"]
 edition = "2018"
 
 [dependencies]
 clap = {version = "2.33.3", features = ["yaml"]}
-rusqlite = {version = "0.24.0", features = ["bundled"]}
-hex = "0.4.2"
-md2 = "0.9.0"
-md4 = "0.9.0"
-md-5 = "0.9.1"
