@@ -15,18 +15,22 @@
 extern crate clap;
 use clap::App;
 
+mod database;
+
+
 fn main() {
-    let yaml = load_yaml!("cli.yaml");
-    let matches = App::from_yaml(yaml).get_matches();
+    database::main();
+    //let yaml = load_yaml!("cli.yaml");
+    //let matches = App::from_yaml(yaml).get_matches();
     //This is where the actual application of the arguments take place.
-    if matches.is_present("wordlist") {
-    }
-    if matches.is_present("batch") {
-    }
-    if matches.is_present("single hash") {
-    } 
-    if matches.is_present("PWDUMP") {
-    } 
-    if matches.is_present("show_wordlist") {
-    }
+    //if matches.is_present("wordlist") {
+    //}
+    //if matches.is_present("batch") {
+    //}
+    //if matches.is_present("single hash") {
+    //} 
+    //if matches.is_present("PWDUMP") {
+    //} 
+    //if matches.is_present("show_wordlist") {
+    //}
 }
