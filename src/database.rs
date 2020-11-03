@@ -3,6 +3,7 @@ use std::process;
 use std::fs::File;
 use std::fmt;
 use serde::Deserialize;
+extern crate exfil;
 
 
 type Record = (String, i8, String);
@@ -22,7 +23,7 @@ fn run() -> Result<(), Box<dyn Error>> {
     for result in rdr.deserialize() {
         // We must tell Serde what type we want to deserialize into.
         let record: Record = result?;
-        println!("{:?}", record);
+        exfil::hash(record.0);
     }
     Ok(())
 }
