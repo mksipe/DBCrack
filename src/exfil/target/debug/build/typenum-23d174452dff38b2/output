@@ -1,0 +1,2 @@
+cargo:rustc-env=TYPENUM_BUILD_CONSTS=/Users/masonsipe/Documents/rust/dbcrack/src/exfil/target/debug/build/typenum-23d174452dff38b2/out/consts.rs
+cargo:rustc-env=TYPENUM_BUILD_OP=/Users/masonsipe/Documents/rust/dbcrack/src/exfil/target/debug/build/typenum-23d174452dff38b2/out/op.rs
