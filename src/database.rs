@@ -6,7 +6,7 @@ use serde::Deserialize;
 extern crate exfil;
 
 
-type Record = (String);
+type Record = String;
 
 pub fn main() {
     if let Err(err) = run() {
