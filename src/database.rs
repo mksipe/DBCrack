@@ -6,7 +6,7 @@ use serde::Deserialize;
 extern crate exfil;
 
 
-type Record = (String, i8, String);
+type Record = (String);
 
 pub fn main() {
     if let Err(err) = run() {
@@ -23,7 +23,7 @@ fn run() -> Result<(), Box<dyn Error>> {
     for result in rdr.deserialize() {
         // We must tell Serde what type we want to deserialize into.
         let record: Record = result?;
-        exfil::hash(record.0);
+        exfil::hash(record);
     }
     Ok(())
 }
