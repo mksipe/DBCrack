@@ -19,18 +19,18 @@ mod database;
 
 
 fn main() {
-    database::main();
-    //let yaml = load_yaml!("cli.yaml");
-    //let matches = App::from_yaml(yaml).get_matches();
+    let yaml = load_yaml!("cli.yaml");
+    let matches = App::from_yaml(yaml).get_matches();
     //This is where the actual application of the arguments take place.
-    //if matches.is_present("wordlist") {
-    //}
-    //if matches.is_present("batch") {
-    //}
-    //if matches.is_present("single hash") {
-    //} 
-    //if matches.is_present("PWDUMP") {
-    //} 
-    //if matches.is_present("show_wordlist") {
-    //}
+    if matches.is_present("wordlist") {
+    }
+    if matches.is_present("batch") {
+            database::main();
+    }
+    if matches.is_present("single hash") {
+    } 
+    if matches.is_present("PWDUMP") {
+    } 
+    if matches.is_present("show_wordlist") {
+    }
 }
