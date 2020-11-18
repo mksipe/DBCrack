@@ -47,6 +47,8 @@ fn md2(s: String) -> String {
 }
 
 use std::fs::File;
+use std::path::Path;
+use std::io::BufRead;
 use std::io::{Read, BufReader};
  
 fn entropy<I: IntoIterator<Item = u8>>(iter: I) -> f32 {
@@ -66,25 +68,32 @@ fn entropy<I: IntoIterator<Item = u8>>(iter: I) -> f32 {
         .map(|ratio| -ratio * ratio.log2())
         .sum()
 }
+//nice
 
 use std::process;
  
 pub fn calcent(name: String) {
     //let name = std::env::args().nth(0).expect("Could not get program name.");
     let file = BufReader::new(File::open(name).expect("Could not read file."));
-    let entr = entropy(file.bytes().flatten());
-    //println!("{}", entr); //debug function
-    if entr >= 3.5 {
-        if entr <= 5.0{
-            println!("Entrophy of {}. This is a form of english.", entr);
-            process::exit(0);
+    for line in file.lines() {
+        let mut l = line.unwrap();
+        let entr: f32 = entropy(l.bytes());
+        //println!("{:?}", l); //debug function
+        //println!("{}", entr); //debug function
+        if entr > 3.5 {
+            if entr < 5.0{
+                println!("Transisional:{}:{}",l,entr);
+                process::exit(0);
+            }
+        println!("Sequential:{}:{}",l,entr);
         }
-    println!("Entrophy of {}. This data is sequential.", entr);
+        if entr > 5.0 {
+            println!("Encrypted:{}:{}", l,entr);
+        }
+        else{
+            println!("{}:{}:{}", "Error",entr,l);
+        }
+
     }
-    if entr >= 5.0 {
-        println!("Entrophy of {}. This data is compressed or encrypted.", entr);
-    }
-    else{
-        println!("{}", "There was an error.");
-    }
+
 }

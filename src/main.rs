@@ -27,7 +27,7 @@ fn main() {
     //This is where the actual application of the arguments take place.
     if matches.is_present("wordlist") {
         let file: &str  = matches.value_of("wordlist").unwrap();
-        exfil::calcent(file.to_string());
+        //exfil::calcent(file.to_string()); //will be used on a different command not in the regular wordlist addition argument.
     }
     if matches.is_present("batch") {
             database::main();
