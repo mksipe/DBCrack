@@ -16,7 +16,7 @@ pub fn main() {
 }
 
 fn run() -> Result<(), Box<dyn Error>> {
-    let file = File::open("src/db.csv")?;
+    let file = File::open("src/terms.txt")?;
     let mut rdr = csv::Reader::from_reader(file);
     // Instead of creating an iterator with the `records` method, we create
     // an iterator with the `deserialize` method.

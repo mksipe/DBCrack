@@ -16,6 +16,9 @@ extern crate clap;
 use clap::App;
 
 mod database;
+mod filefuncs;
+
+use exfil;
 
 
 fn main() {
@@ -23,6 +26,8 @@ fn main() {
     let matches = App::from_yaml(yaml).get_matches();
     //This is where the actual application of the arguments take place.
     if matches.is_present("wordlist") {
+        let file: &str  = matches.value_of("wordlist").unwrap();
+        exfil::calcent(file.to_string());
     }
     if matches.is_present("batch") {
             database::main();
